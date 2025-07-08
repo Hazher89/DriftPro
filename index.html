@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <title>DriftPro – Tilbakestill passord</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <style>
+    body { font-family: sans-serif; max-width: 400px; margin: 40px auto; background: #fafbfc; }
+    h1 { color: #1a237e; }
+    input, button { font-size: 1.1em; margin: 10px 0; width: 100%; padding: 8px; }
+    button { background: #1a237e; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    #status { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Lag nytt passord</h1>
+  <input type="password" id="new-password" placeholder="Nytt passord" />
+  <button onclick="resetPassword()">Lagre nytt passord</button>
+  <div id="status"></div>
+  <script>
+    // Bytt ut med dine egne verdier fra Supabase!
+    const supabase = supabase.createClient(
+      'https://yaibgllmlgrozznwnqcn.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlhaWJnbGxtbGdyb3p6bnducWNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5NzQ1NTMsImV4cCI6MjA2NzU1MDU1M30.JXHl4_kko9vNWsGggqCRo3Ns__uwrAedRIMf_I6uaT4'
+    );
+    async function resetPassword() {
+      const newPassword = document.getElementById('new-password').value;
+      if (!newPassword) {
+        document.getElementById('status').innerText = 'Skriv inn et nytt passord!';
+        return;
+      }
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      document.getElementById('status').innerText = error ? error.message : 'Passordet er endret!';
+    }
+  </script>
+</body>
+</html>
