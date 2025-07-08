@@ -20,21 +20,27 @@
   <script>
     // Bytt ut med dine egne verdier fra Supabase!
     const supabase = supabase.createClient(
-      'https://yaibgllmlgrozznwnqcn.supabase.co',
+      'https:https://yaibgllmlgrozznwnqcn.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlhaWJnbGxtbGdyb3p6bnducWNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5NzQ1NTMsImV4cCI6MjA2NzU1MDU1M30.JXHl4_kko9vNWsGggqCRo3Ns__uwrAedRIMf_I6uaT4'
     );
 
-    // Hent access_token fra URL hvis det finnes
+    // Hent access_token og refresh_token fra URL
     const url = new URL(window.location.href);
     const access_token = url.searchParams.get('access_token');
     const refresh_token = url.searchParams.get('refresh_token');
 
-    // Hvis access_token finnes, logg inn brukeren automatisk
+    // Sett session hvis tokens finnes
     if (access_token && refresh_token) {
       supabase.auth.setSession({
         access_token,
         refresh_token
+      }).then(({ error }) => {
+        if (error) {
+          document.getElementById('status').innerText = 'Feil med innlogging: ' + error.message;
+        }
       });
+    } else {
+      document.getElementById('status').innerText = 'Du mangler tilgangstoken. Åpne lenken fra e-posten på nytt.';
     }
 
     async function resetPassword() {
