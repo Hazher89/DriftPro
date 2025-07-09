@@ -1,56 +1,119 @@
 <!DOCTYPE html>
 <html lang="no">
 <head>
-  <meta charset="UTF-8" />
-  <title>DriftPro – Tilbakestill passord</title>
+  <meta charset="UTF-8">
+  <title>DriftPro - Verifisering og nytt passord</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <style>
-    body { font-family: sans-serif; max-width: 400px; margin: 40px auto; background: #fafbfc; }
-    h1 { color: #1a237e; }
-    input, button { font-size: 1.1em; margin: 10px 0; width: 100%; padding: 8px; }
-    button { background: #1a237e; color: white; border: none; border-radius: 4px; cursor: pointer; }
-    #status { margin-top: 20px; }
+    body { font-family: Arial, sans-serif; background: #111; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
+    .container { background: #222; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 8px #0008; max-width: 350px; width: 100%; }
+    input, button { width: 100%; padding: 0.7rem; margin: 0.5rem 0; border-radius: 5px; border: none; }
+    input { background: #333; color: #fff; }
+    button { background: #1976d2; color: #fff; font-weight: bold; cursor: pointer; }
+    #reset-message, #verify-message { margin-top: 1rem; min-height: 2em; }
+    .success { color: #4caf50; }
+    .error { color: #ff5252; }
+    .loader {
+      border: 4px solid #333;
+      border-top: 4px solid #1976d2;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg);}
+      100% { transform: rotate(360deg);}
+    }
+    .showpass {
+      background: #444; color: #fff; border: none; border-radius: 5px; margin-top: -0.5rem; margin-bottom: 1rem; cursor: pointer; width: auto; padding: 0.3rem 0.7rem;
+    }
   </style>
 </head>
 <body>
-  <h1>Lag nytt passord</h1>
-  <input type="password" id="new-password" placeholder="Nytt passord" />
-  <button onclick="resetPassword()">Lagre nytt passord</button>
-  <div id="status"></div>
-  <script>
-    // Bytt ut med dine egne verdier fra Supabase!
-    const supabase = supabase.createClient(
-      'https:https://yaibgllmlgrozznwnqcn.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlhaWJnbGxtbGdyb3p6bnducWNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5NzQ1NTMsImV4cCI6MjA2NzU1MDU1M30.JXHl4_kko9vNWsGggqCRo3Ns__uwrAedRIMf_I6uaT4'
-    );
+  <div class="container">
+        <div id="reset-section" style="display:none;">
+      <h2>Lag nytt passord</h2>
+      <input type="password" id="new-password" placeholder="Nytt passord" autocomplete="new-password" />
+      <button class="showpass" onclick="togglePassword()">Vis/skjul passord</button>
+      <button id="reset-btn" onclick="resetPassword()">Lagre nytt passord</button>
+      <div id="reset-message"></div>
+      <div id="reset-loader" style="display:none;" class="loader"></div>
+    </div>
+    <div id="verify-section" style="display:none;">
+      <h2>Verifiserer konto...</h2>
+      <div id="verify-message"></div>
+    </div>
+    <div id="default-section" style="display:none;">
+      <h2>Ugyldig eller manglende lenke</h2>
+      <p>Vennligst bruk lenken du fikk på e-post.</p>
+    </div>
+  </div>
+    <script>
+    // 1. Sett inn dine egne Supabase-verdier her:
+    const SUPABASE_URL = "https://yaibgllmlgrozznwnqcn.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlhaWJnbGxtbGdyb3p6bnducWNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5NzQ1NTMsImV4cCI6MjA2NzU1MDU1M30.JXHl4_kko9vNWsGggqCRo3Ns__uwrAedRIMf_I6uaT4"; // <-- BYTT UT DENNE!
 
-    // Hent access_token og refresh_token fra URL
-    const url = new URL(window.location.href);
-    const access_token = url.searchParams.get('access_token');
-    const refresh_token = url.searchParams.get('refresh_token');
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Sett session hvis tokens finnes
-    if (access_token && refresh_token) {
-      supabase.auth.setSession({
-        access_token,
-        refresh_token
-      }).then(({ error }) => {
-        if (error) {
-          document.getElementById('status').innerText = 'Feil med innlogging: ' + error.message;
-        }
-      });
+    // Hent parametere fra URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const type = urlParams.get('type');
+    const accessToken = urlParams.get('token');
+
+    // Vis riktig seksjon
+    if (type === 'recovery' && accessToken) {
+      document.getElementById('reset-section').style.display = 'block';
+    } else if ((type === 'signup' || type === 'email_change') && accessToken) {
+      document.getElementById('verify-section').style.display = 'block';
+      verifyEmail();
     } else {
-      document.getElementById('status').innerText = 'Du mangler tilgangstoken. Åpne lenken fra e-posten på nytt.';
+      document.getElementById('default-section').style.display = 'block';
     }
 
+    // Vis/skjul passord
+    function togglePassword() {
+      const input = document.getElementById('new-password');
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    // Funksjon for å resette passord
     async function resetPassword() {
       const newPassword = document.getElementById('new-password').value;
+      const msg = document.getElementById('reset-message');
+      const loader = document.getElementById('reset-loader');
+      msg.innerText = "";
+      msg.className = "";
       if (!newPassword) {
-        document.getElementById('status').innerText = 'Skriv inn et nytt passord!';
+        msg.innerText = "Skriv inn nytt passord.";
+        msg.className = "error";
         return;
       }
-      const { error } = await supabase.auth.updateUser({ password: newPassword });
-      document.getElementById('status').innerText = error ? error.message : 'Passordet er endret!';
+      loader.style.display = "block";
+      document.getElementById('reset-btn').disabled = true;
+      try {
+        await supabase.auth.setSession({ access_token: accessToken, refresh_token: accessToken });
+        const { error } = await supabase.auth.updateUser({ password: newPassword });
+        if (error) {
+          msg.innerText = "Feil: " + error.message;
+          msg.className = "error";
+        } else {
+          msg.innerText = "✅ Passordet er endret! Du kan nå logge inn.";
+          msg.className = "success";
+        }
+      } catch (e) {
+        msg.innerText = "Uventet feil: " + e.message;
+        msg.className = "error";
+      }
+      loader.style.display = "none";
+      document.getElementById('reset-btn').disabled = false;
+    }
+
+    // Funksjon for å vise e-postverifisering
+    async function verifyEmail() {
+      document.getElementById('verify-message').innerHTML = "<span class='success'>✅ E-posten din er nå verifisert! Du kan lukke dette vinduet og logge inn i appen.</span>";
     }
   </script>
 </body>
