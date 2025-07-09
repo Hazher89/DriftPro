@@ -43,17 +43,15 @@
       <h2>Ugyldig eller manglende lenke</h2>
       <p>Vennligst bruk lenken du fikk på e-post.</p>
     </div>
-  </div>
-  <script>
+  </div>  <script>
     // Supabase-verdier
-    const SUPABASE_URL = "https://https://yaibgllmlgrozznwnqcn.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlhaWJnbGxtbGdyb3p6bnducWNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5NzQ1NTMsImV4cCI6MjA2NzU1MDU1M30.JXHl4_kko9vNWsGggqCRo3Ns__uwrAedRIMf_I6uaT4";
+    const SUPABASE_URL = "https://ohkaaxlfwklaagmodxqj.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9oa2FheGxmd2tsYWFnbW9keHFqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwODM5MzgsImV4cCI6MjA2NzY1OTkzOH0.4OCalgvN6vW4M_sTGUXZ8nXEbOlNx4rZY4Kjja4y6OE";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // Hent parametere fra URL
     const urlParams = new URLSearchParams(window.location.search);
     const type = urlParams.get('type');
-    // Hent alle mulige token-navn
     let accessToken = urlParams.get('access_token') || urlParams.get('token') || urlParams.get('confirmation_token');
 
     // For e-postbekreftelse og endre e-post, bruk confirmation_token hvis den finnes
@@ -83,9 +81,7 @@
     function togglePassword() {
       const input = document.getElementById('new-password');
       input.type = input.type === 'password' ? 'text' : 'password';
-    }
-
-    // Funksjon for å resette passord
+    }    // Funksjon for å resette passord
     async function resetPassword() {
       const newPassword = document.getElementById('new-password').value;
       const msg = document.getElementById('reset-message');
