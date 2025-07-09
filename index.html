@@ -35,6 +35,22 @@
 </head>
 <body>
   <div class="container">    <div id="reset-section" style="display:none;">
+        <div id="reset-section" style="display:none;">
+      <h2>Lag nytt passord</h2>
+      <input type="password" id="new-password" placeholder="Nytt passord" autocomplete="new-password" />
+      <button class="showpass" onclick="togglePassword()">Vis/skjul passord</button>
+      <button id="reset-btn" onclick="resetPassword()">Lagre nytt passord</button>
+      <div id="reset-message"></div>
+      <div id="reset-loader" style="display:none;" class="loader"></div>
+    </div>
+    <div id="verify-section" style="display:none;">
+      <h2>Verifiserer konto...</h2>
+      <div id="verify-message"></div>
+    </div>
+    <div id="default-section" style="display:none;">
+      <h2>Ugyldig eller manglende lenke</h2>
+      <p>Vennligst bruk lenken du fikk på e-post.</p>
+    </div>
       <h2>Lag nytt passord</h2>
       <input type="password" id="new-password" placeholder="Nytt passord" autocomplete="new-password" />
       <button class="showpass" onclick="togglePassword()">Vis/skjul passord</button>
