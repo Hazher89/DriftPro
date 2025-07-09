@@ -6,14 +6,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <style>
-    body { font-family: Arial, sans-serif; background: #f7f7f7; color: #222; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
-    .container { background: #fff; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 12px #0002; max-width: 350px; width: 100%; }
-    input, button { width: 100%; padding: 0.7rem; margin: 0.5rem 0; border-radius: 5px; border: 1px solid #ccc; }
-    input { background: #f3f3f3; color: #222; }
-    button { background: #1976d2; color: #fff; font-weight: bold; cursor: pointer; border: none; }
-    #reset-message, #verify-message { margin-top: 1rem; min-height: 2em; }
-    .success { color: #388e3c; }
-    .error { color: #d32f2f; }
+    body { 
+      font-family: Arial, sans-serif; 
+      background: #f7f7f7; 
+      color: #222; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      justify-content: center; 
+      min-height: 100vh; 
+      margin: 0;
+      padding: 20px;
+    }
+    .container { 
+      background: #fff; 
+      padding: 2rem; 
+      border-radius: 12px; 
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1); 
+      max-width: 400px; 
+      width: 100%; 
+    }
+    input, button { 
+      width: 100%; 
+      padding: 0.7rem; 
+      margin: 0.5rem 0; 
+      border-radius: 5px; 
+      border: 1px solid #ccc; 
+      box-sizing: border-box;
+    }
+    input { 
+      background: #f3f3f3; 
+      color: #222; 
+    }
+    button { 
+      background: #1976d2; 
+      color: #fff; 
+      font-weight: bold; 
+      cursor: pointer; 
+      border: none; 
+    }
+    button:hover {
+      background: #1565c0;
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    #reset-message, #verify-message { 
+      margin-top: 1rem; 
+      min-height: 2em; 
+      text-align: center;
+    }
+    .success { 
+      color: #388e3c; 
+      font-weight: bold;
+    }
+    .error { 
+      color: #d32f2f; 
+      font-weight: bold;
+    }
     .loader {
       border: 4px solid #eee;
       border-top: 4px solid #1976d2;
@@ -28,14 +79,31 @@
       100% { transform: rotate(360deg);}
     }
     .showpass {
-      background: #eee; color: #1976d2; border: none; border-radius: 5px; margin-top: -0.5rem; margin-bottom: 1rem; cursor: pointer; width: auto; padding: 0.3rem 0.7rem;
+      background: #eee; 
+      color: #1976d2; 
+      border: none; 
+      border-radius: 5px; 
+      margin-top: -0.5rem; 
+      margin-bottom: 1rem; 
+      cursor: pointer; 
+      width: auto; 
+      padding: 0.3rem 0.7rem;
     }
-    h2 { text-align: center; }
+    h2 { 
+      text-align: center; 
+      margin-top: 0;
+    }
+    .section {
+      display: none;
+    }
+    .section.active {
+      display: block;
+    }
   </style>
 </head>
 <body>
-  <div class="container">    <div id="reset-section" style="display:none;">
-        <div id="reset-section" style="display:none;">
+  <div class="container">
+    <div id="reset-section" class="section">
       <h2>Lag nytt passord</h2>
       <input type="password" id="new-password" placeholder="Nytt passord" autocomplete="new-password" />
       <button class="showpass" onclick="togglePassword()">Vis/skjul passord</button>
@@ -43,49 +111,50 @@
       <div id="reset-message"></div>
       <div id="reset-loader" style="display:none;" class="loader"></div>
     </div>
-    <div id="verify-section" style="display:none;">
+    
+    <div id="verify-section" class="section">
       <h2>Verifiserer konto...</h2>
       <div id="verify-message"></div>
+      <div id="verify-loader" class="loader"></div>
     </div>
-    <div id="default-section" style="display:none;">
+    
+    <div id="default-section" class="section">
       <h2>Ugyldig eller manglende lenke</h2>
       <p>Vennligst bruk lenken du fikk på e-post.</p>
     </div>
-      <h2>Lag nytt passord</h2>
-      <input type="password" id="new-password" placeholder="Nytt passord" autocomplete="new-password" />
-      <button class="showpass" onclick="togglePassword()">Vis/skjul passord</button>
-      <button id="reset-btn" onclick="resetPassword()">Lagre nytt passord</button>
-      <div id="reset-message"></div>
-      <div id="reset-loader" style="display:none;" class="loader"></div>
-    </div>
-    <div id="verify-section" style="display:none;">
-      <h2>Verifiserer konto...</h2>
-      <div id="verify-message"></div>
-    </div>
-    <div id="default-section" style="display:none;">
-      <h2>Ugyldig eller manglende lenke</h2>
-      <p>Vennligst bruk lenken du fikk på e-post.</p>
-    </div>
-  </div>  <script>
-    // 1. Sett inn dine egne Supabase-verdier her:
-    const SUPABASE_URL = "https://yaibgllmlgrozznwnqcn.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlhaWJnbGxtbGdyb3p6bnducWNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5NzQ1NTMsImV4cCI6MjA2NzU1MDU1M30.JXHl4_kko9vNWsGggqCRo3Ns__uwrAedRIMf_I6uaT4"; // <-- BYTT UT DENNE!
+  </div>
 
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  <script>
+    // Supabase-verdier
+    const SUPABASE_URL = "https://yaibgllmlgrozznwnqcn.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlhaWJnbGxtbGdyb3p6bnducWNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5NzQ1NTMsImV4cCI6MjA2NzU1MDU1M30.JXHl4_kko9vNWsGggqCRo3Ns__uwrAedRIMf_I6uaT4";
+
+    // Opprett Supabase-klient
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // Hent parametere fra URL
     const urlParams = new URLSearchParams(window.location.search);
     const type = urlParams.get('type');
-    const accessToken = urlParams.get('token');
+    const accessToken = urlParams.get('access_token') || urlParams.get('token');
 
-    // Vis riktig seksjon
+    // Funksjon for å vise seksjon
+    function showSection(sectionId) {
+      // Skjul alle seksjoner
+      document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active');
+      });
+      // Vis riktig seksjon
+      document.getElementById(sectionId).classList.add('active');
+    }
+
+    // Vis riktig seksjon basert på URL-parametere
     if (type === 'recovery' && accessToken) {
-      document.getElementById('reset-section').style.display = 'block';
+      showSection('reset-section');
     } else if ((type === 'signup' || type === 'email_change') && accessToken) {
-      document.getElementById('verify-section').style.display = 'block';
+      showSection('verify-section');
       verifyEmail();
     } else {
-      document.getElementById('default-section').style.display = 'block';
+      showSection('default-section');
     }
 
     // Vis/skjul passord
@@ -99,36 +168,91 @@
       const newPassword = document.getElementById('new-password').value;
       const msg = document.getElementById('reset-message');
       const loader = document.getElementById('reset-loader');
+      const btn = document.getElementById('reset-btn');
+      
       msg.innerText = "";
       msg.className = "";
+      
       if (!newPassword) {
         msg.innerText = "Skriv inn nytt passord.";
         msg.className = "error";
         return;
       }
+      
+      if (newPassword.length < 6) {
+        msg.innerText = "Passordet må være minst 6 tegn.";
+        msg.className = "error";
+        return;
+      }
+      
       loader.style.display = "block";
-      document.getElementById('reset-btn').disabled = true;
+      btn.disabled = true;
+      
       try {
-        await supabase.auth.setSession({ access_token: accessToken, refresh_token: accessToken });
-        const { error } = await supabase.auth.updateUser({ password: newPassword });
+        // Sett session med access token
+        const { error: sessionError } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: accessToken
+        });
+        
+        if (sessionError) {
+          throw new Error('Ugyldig eller utløpt lenke');
+        }
+        
+        // Oppdater passord
+        const { error } = await supabase.auth.updateUser({ 
+          password: newPassword 
+        });
+        
         if (error) {
           msg.innerText = "Feil: " + error.message;
           msg.className = "error";
         } else {
           msg.innerText = "✅ Passordet er endret! Du kan nå logge inn.";
           msg.className = "success";
+          document.getElementById('new-password').value = '';
         }
       } catch (e) {
         msg.innerText = "Uventet feil: " + e.message;
         msg.className = "error";
       }
+      
       loader.style.display = "none";
-      document.getElementById('reset-btn').disabled = false;
+      btn.disabled = false;
     }
 
-    // Funksjon for å vise e-postverifisering
+    // Funksjon for å verifisere e-post
     async function verifyEmail() {
-      document.getElementById('verify-message').innerHTML = "<span class='success'>✅ E-posten din er nå verifisert! Du kan lukke dette vinduet og logge inn i appen.</span>";
+      const msg = document.getElementById('verify-message');
+      const loader = document.getElementById('verify-loader');
+      
+      try {
+        // Sett session med access token
+        const { error: sessionError } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: accessToken
+        });
+        
+        if (sessionError) {
+          throw new Error('Ugyldig eller utløpt lenke');
+        }
+        
+        // Verifiser e-post
+        const { error } = await supabase.auth.verifyOtp({
+          token_hash: accessToken,
+          type: type === 'signup' ? 'signup' : 'email_change'
+        });
+        
+        if (error) {
+          msg.innerHTML = "<span class='error'>❌ Feil ved verifisering: " + error.message + "</span>";
+        } else {
+          msg.innerHTML = "<span class='success'>✅ E-posten din er nå verifisert! Du kan lukke dette vinduet og logge inn i appen.</span>";
+        }
+      } catch (e) {
+        msg.innerHTML = "<span class='error'>❌ Feil: " + e.message + "</span>";
+      }
+      
+      loader.style.display = "none";
     }
   </script>
 </body>
