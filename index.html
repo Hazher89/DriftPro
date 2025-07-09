@@ -135,7 +135,12 @@
     // Hent parametere fra URL
     const urlParams = new URLSearchParams(window.location.search);
     const type = urlParams.get('type');
-    const accessToken = urlParams.get('access_token') || urlParams.get('token');
+    let accessToken = urlParams.get('access_token') || urlParams.get('token');
+
+    // For e-postbekreftelse og endre e-post, bruk confirmation_token
+    if (type === 'signup' || type === 'email_change') {
+      accessToken = urlParams.get('confirmation_token');
+    }
 
     // Funksjon for å vise seksjon
     function showSection(sectionId) {
@@ -227,7 +232,7 @@
       const loader = document.getElementById('verify-loader');
       
       try {
-        // Sett session med access token
+        // Sett session med access token (confirmation_token)
         const { error: sessionError } = await supabase.auth.setSession({
           access_token: accessToken,
           refresh_token: accessToken
