@@ -6,16 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <style>
-    body { font-family: Arial, sans-serif; background: #111; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
-    .container { background: #222; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 8px #0008; max-width: 350px; width: 100%; }
-    input, button { width: 100%; padding: 0.7rem; margin: 0.5rem 0; border-radius: 5px; border: none; }
-    input { background: #333; color: #fff; }
-    button { background: #1976d2; color: #fff; font-weight: bold; cursor: pointer; }
+    body { font-family: Arial, sans-serif; background: #f7f7f7; color: #222; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
+    .container { background: #fff; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 12px #0002; max-width: 350px; width: 100%; }
+    input, button { width: 100%; padding: 0.7rem; margin: 0.5rem 0; border-radius: 5px; border: 1px solid #ccc; }
+    input { background: #f3f3f3; color: #222; }
+    button { background: #1976d2; color: #fff; font-weight: bold; cursor: pointer; border: none; }
     #reset-message, #verify-message { margin-top: 1rem; min-height: 2em; }
-    .success { color: #4caf50; }
-    .error { color: #ff5252; }
+    .success { color: #388e3c; }
+    .error { color: #d32f2f; }
     .loader {
-      border: 4px solid #333;
+      border: 4px solid #eee;
       border-top: 4px solid #1976d2;
       border-radius: 50%;
       width: 24px;
@@ -28,13 +28,13 @@
       100% { transform: rotate(360deg);}
     }
     .showpass {
-      background: #444; color: #fff; border: none; border-radius: 5px; margin-top: -0.5rem; margin-bottom: 1rem; cursor: pointer; width: auto; padding: 0.3rem 0.7rem;
+      background: #eee; color: #1976d2; border: none; border-radius: 5px; margin-top: -0.5rem; margin-bottom: 1rem; cursor: pointer; width: auto; padding: 0.3rem 0.7rem;
     }
+    h2 { text-align: center; }
   </style>
 </head>
 <body>
-  <div class="container">
-        <div id="reset-section" style="display:none;">
+  <div class="container">    <div id="reset-section" style="display:none;">
       <h2>Lag nytt passord</h2>
       <input type="password" id="new-password" placeholder="Nytt passord" autocomplete="new-password" />
       <button class="showpass" onclick="togglePassword()">Vis/skjul passord</button>
@@ -50,8 +50,7 @@
       <h2>Ugyldig eller manglende lenke</h2>
       <p>Vennligst bruk lenken du fikk på e-post.</p>
     </div>
-  </div>
-    <script>
+  </div>  <script>
     // 1. Sett inn dine egne Supabase-verdier her:
     const SUPABASE_URL = "https://yaibgllmlgrozznwnqcn.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlhaWJnbGxtbGdyb3p6bnducWNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5NzQ1NTMsImV4cCI6MjA2NzU1MDU1M30.JXHl4_kko9vNWsGggqCRo3Ns__uwrAedRIMf_I6uaT4"; // <-- BYTT UT DENNE!
