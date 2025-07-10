@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>DriftPro - Autentisering</title>
+  <title>DriftPro Autentisering</title>
   <style>
     body {
       background: linear-gradient(135deg, #1a1a40 0%, #2d2d7a 100%);
       color: #fff;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', Arial, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -17,18 +17,18 @@
       margin: 0;
     }
     .card {
-      background: rgba(30, 30, 60, 0.85);
-      border-radius: 20px;
+      background: rgba(30, 30, 60, 0.95);
+      border-radius: 24px;
       box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-      padding: 2rem 2.5rem;
-      max-width: 400px;
+      padding: 2.5rem 2rem;
+      max-width: 420px;
       text-align: center;
       backdrop-filter: blur(8px);
     }
     h1 {
-      margin-bottom: 1rem;
       font-size: 2rem;
-      letter-spacing: 1px;
+      margin-bottom: 1rem;
+      color: #6a82fb;
     }
     .status {
       margin-top: 1.5rem;
@@ -40,6 +40,9 @@
     }
     .success {
       color: #4ef37a;
+    }
+    .info {
+      color: #aaf;
     }
     input, button {
       margin-top: 1rem;
@@ -84,9 +87,14 @@
     const access_token = url.searchParams.get('access_token');
     const type = url.searchParams.get('type');
 
+    function showDefaultInfo() {
+      statusDiv.textContent = "Hvis du nettopp har trykket på en lenke fra e-posten, er handlingen fullført. Du kan nå gå tilbake til DriftPro-appen og logge inn.";
+      statusDiv.className = "status info";
+    }
+
     async function handleAuth() {
       if (type === 'recovery' && access_token) {
-        // Vis skjema for nytt passord
+        // Vis skjema for nytt passord (kun hvis Supabase faktisk sender access_token)
         statusDiv.textContent = "Sett nytt passord for kontoen din.";
         resetForm.style.display = "block";
       } else if (type === 'signup' && access_token) {
@@ -94,8 +102,7 @@
         statusDiv.textContent = "E-posten din er nå verifisert! Du kan lukke dette vinduet og logge inn i appen.";
         statusDiv.className = "status success";
       } else {
-        statusDiv.textContent = "Ugyldig eller utløpt lenke.";
-        statusDiv.className = "status error";
+        showDefaultInfo();
       }
     }
         async function resetPassword() {
