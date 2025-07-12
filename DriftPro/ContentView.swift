@@ -7,15 +7,13 @@
 
 import SwiftUI
 
+// This file is no longer used as the main entry point
+// The app now uses DriftProApp.swift with proper navigation flow
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+        Text("DriftPro - Bedriftsstyring og Avvikshåndtering")
+            .font(.title)
+            .foregroundColor(.blue)
     }
 }
 
