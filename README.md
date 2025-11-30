@@ -36,6 +36,48 @@ DriftPro er en moderne, omfattende bedriftsstyringsløsning designet for å hån
 - **Tilpasning**: Logo, farger og innhold per bedrift
 - **Admin per bedrift**: Dedikert administrator for hver bedrift
 
+## 🌐 DriftPro Admin (Web)
+
+DriftPro-plattformen inkluderer et omfattende web‑administrasjonspanel bygget med Next.js. Denne delen beskriver nye funksjoner og sider i admin‑løsningen som ikke tidligere var dokumentert her.
+
+### Hovedområder
+- **Logistikk**
+  - ` /driver-login ` – innlogging for sjåfører
+  - ` /driver-dashboard ` – sjåfør‑oversikt og oppdrag
+  - ` /driver-delivery ` – aktive leveranser og status
+  - ` /partner-login ` – innlogging for partnere
+  - ` /partner-dashboard ` – oppdrag, status og kommunikasjon
+- **Administrasjon**
+  - ` /dashboard/shifts ` – vaktplanlegging for logistikk
+  - ` /dashboard/timeclock ` – stempling og tidsregistrering
+  - ` /dashboard/suppliers ` – leverandører og logistikkpartnere
+  - ` /dashboard/reports ` – KPI, rapporter og eksport
+- **HMS**
+  - Avvik, risikostyring, sikkerhet, miljø, kompetanse, sjekklister og rapportering
+- **Konto og autentisering**
+  - ` /login `, ` /partner-login `, ` /driver-login `
+  - ` /setup-password ` – førstegangs passordoppsett
+  - ` /forgot-password ` – glemt passord
+  - ` /reset-password ` – tilbakestilling av passord
+
+### Nye funksjoner (Admin)
+- Automatisk fallback ved passordoppsett: hvis Firebase Admin SDK ikke er tilgjengelig/feiler, sendes tilbakestillings‑epost via Client SDK slik at brukeren kan sette nytt passord
+- Tydelig UI‑suksessmelding når tilbakestillings‑epost er sendt (selv ved API‑feilstatus)
+- App‑only e‑postavsender via Microsoft Graph (fast avsender), dokumentert oppsett og miljøvariabler
+- Forbedret produksjonsdokumentasjon og feilsøking for "Admin SDK feilet"‑scenarioer
+
+### Teknologi (Admin)
+- **Frontend**: Next.js 15 + TypeScript + Tailwind
+- **Backend/API**: Next.js API Routes
+- **Auth & Data**: Firebase Auth, Firestore, Storage
+- **E‑post**: Domeneshop SMTP og/eller Microsoft Graph app‑only
+
+### Kildekode og dokumentasjon
+- Admin‑kildekode: `https://github.com/Hazher89/ADMIN`
+- Dokumenter: `PRODUCTION_SETUP.md`, `MICROSOFT_GRAPH_SETUP.md`, `OFFICE365_EMAIL_SETUP.md`, `STORAGE_OVERVIEW.md`
+
+> Merk: Denne README‑en samler plattformoversikten. iOS‑appen (SwiftUI) og Admin‑panelet (web) utgjør sammen DriftPro‑økosystemet.
+
 ## 🛠 Teknisk Stack
 
 - **Frontend**: SwiftUI (iOS)
@@ -221,4 +263,4 @@ Takk til alle som har bidratt til DriftPro-prosjektet. Spesiell takk til:
 
 ---
 
-**DriftPro** - Moderne bedriftsstyring for det digitale arbeidslivet 🏢✨ 
+**DriftPro** - Moderne bedriftsstyring for det digitale arbeidslivet 🏢✨
